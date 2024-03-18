@@ -326,6 +326,21 @@ class UserDAO:
             print(err)
             return err
 
+    def update_criminal(self, c_id, name, age, description, division, district):
+        try:
+            cursor = self.cnx.cursor()
+            query = ("update criminals "
+                     "set name=%s, age=%s, description=%s, division=%s, district=%s "
+                     "where id=%s")
+            values = (name, age, description, division, district, c_id)
+            cursor.execute(query, values)
+            self.cnx.commit()
+            cursor.close()
+            return "Criminal is added"
+        except mysql.connector.Error as err:
+            print(err)
+            return err
+
     def query_all_criminals(self):
         """
         Query the criminals table for all criminals

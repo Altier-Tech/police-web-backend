@@ -4,7 +4,7 @@ from auth.authorize import get_current_user, credentials_exception, oauth2_schem
 from mailer import send_mail
 from services.officer_service import get_all_clearance_requests, get_all_lost_item_reports, \
     get_single_clearance_request, update_clearance_report, get_officer_id, all_complaints, get_all_criminals, \
-    add_new_criminal, get_criminal_sightings, get_alerts
+    add_new_criminal, get_criminal_sightings, get_alerts, update_criminal_data
 
 router = APIRouter(
     prefix="/api/officer",
@@ -28,6 +28,29 @@ async def alerts(
         return {"message": "Only officers can request criminal sighting alerts"}
 
     return get_alerts()
+
+
+@router.post("/update-criminal-data")
+async def update_criminal(
+        c_id: int = Form(...),
+        name: str = Form(...),
+        age: int = Form(...),
+        division: str = Form(...),
+        district: str = Form(...),
+        description: str = Form(...),
+        token: str = Depends(oauth2_scheme)
+):
+    user = await get_current_user(token)
+
+    if user is None:
+        raise credentials_exception
+
+    officer = get_officer_id(user.id)
+
+    if officer is None:
+        return {"message": "Only officers can report criminal sightings"}
+
+    return update_criminal_data(c_id, name, age, description, division, district)
 
 
 @router.post("/criminal-sightings")

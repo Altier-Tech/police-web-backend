@@ -10,6 +10,14 @@ def get_alerts():
         return {"message": "no recent criminal sightings"}
 
 
+def update_criminal_data(c_id, name, age, description, division, district):
+    try:
+        data = dao.update_criminal(c_id, name, age, description, division, district)
+        return data
+    except Exception:
+        return {"error": "db error update criminal"}
+
+
 def get_all_clearance_requests():
     return dao.query_all_clearance_requests()
 
